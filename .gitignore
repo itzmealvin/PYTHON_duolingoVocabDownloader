@@ -1,2 +1,4 @@
-duolingo.txt
+*.txt
+*.csv
+/audio
 .DS_Store

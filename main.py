@@ -1,3 +1,15 @@
+"""
+This module extracts vocabulary from Duolingo HTML files,
+saves them into a text file, generates audio, and outputs
+an Anki-compatible CSV.
+
+Functions:
+    main(): Runs the vocabulary extraction and export workflow.
+    extract_vocabulary(filename): Parses the HTML and returns vocab lists.
+    merge_vocabulary(list1, list2, output_file): Writes merged vocab to a text file.
+    generate_and_save_pronunciation(word, lang_code, output_folder): Saves MP3 for each word.
+"""
+
 import html
 import os
 from datetime import datetime
@@ -70,44 +82,43 @@ def generate_and_save_pronunciation(word, lang_code, output_folder):
     tts.save(filepath)
     print(f"📥 Saved audio for '{word}' to '{filepath}'")
 
-
 def main():
-    # User input with default values
+    """
+    Driver code to extract Duolingo vocabulary, generate audio, and prepare an Anki-friendly CSV.
+    """
     filename = input("Enter the filename (default 'duolingo.txt'): ") or "duolingo.txt"
     langcode = input("Enter the language code (default 'fr-en'): ") or "fr-en"
     output_folder = input("Enter the output folder (default 'audio'): ") or "audio"
 
-    current_date = str(datetime.now().date())
-    languages = langcode.split("-")
-    first_code = languages[0]
-    second_code = languages[1]
-    output_file = f"{current_date}_merged_vocabulary_for_{langcode}.txt"
-    output_filename = f"{current_date}_vocabulary_list_for_anki_{langcode}.csv"
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    first_code, second_code = langcode.split("-")
+    txt_output_file = f"{current_date}_merged_vocabulary_for_{langcode}.txt"
+    csv_output_file = f"{current_date}_vocabulary_list_for_anki_{langcode}.csv"
 
-    print("===== EXTRACT WORDS FROM HTML =====")
-    first_vocab, second_vocab = extract_vocabulary(filename)
-    for i in range(len(first_vocab)):
-        print(f"{first_vocab[i]} \t {second_vocab[i]}")
+    print("===== EXTRACTING WORDS FROM HTML =====")
+    source_vocab, target_vocab = extract_vocabulary(filename)
+    for src, tgt in zip(source_vocab, target_vocab):
+        print(f"{src} \t {tgt}")
 
     print("===== SAVING VOCABULARY TEXT FILE =====")
-    merge_vocabulary(first_vocab, second_vocab, output_file)
-    print(f"📄 Vocabulary text file saved as '{output_file}'")
+    merge_vocabulary(source_vocab, target_vocab, txt_output_file)
+    print(f"📄 Saved vocabulary as '{txt_output_file}'")
 
-    print("===== SAVING VOCABULARY AUDIO FILES =====")
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    print("===== GENERATING AUDIO FILES =====")
+    os.makedirs(output_folder, exist_ok=True)
 
-    for word in first_vocab:
+    for word in source_vocab:
         generate_and_save_pronunciation(word, first_code, output_folder)
 
-    print("===== SAVING ANKI FILE =====")
-    audio_column = [f"{word} [sound:{first_code}_{word}.mp3]" for word in first_vocab]
-    df = pd.DataFrame(
-        {first_code: first_vocab, second_code: second_vocab, "Audio": audio_column}
-    )
-    df.to_csv(output_filename, index=False)
-    print(f"📝 DataFrame saved as '{output_filename}'")
-
+    print("===== CREATING ANKI CSV FILE =====")
+    audio_col = [f"{word} [sound:{first_code}_{word}.mp3]" for word in source_vocab]
+    df = pd.DataFrame({
+        first_code: source_vocab,
+        second_code: target_vocab,
+        "Audio": audio_col
+    })
+    df.to_csv(csv_output_file, index=False)
+    print(f"📝 CSV saved as '{csv_output_file}'")
 
 if __name__ == "__main__":
     main()
