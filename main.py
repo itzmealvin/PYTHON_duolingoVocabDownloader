@@ -1,15 +1,3 @@
-"""
-This module extracts vocabulary from Duolingo HTML files,
-saves them into a text file, generates audio, and outputs
-an Anki-compatible CSV.
-
-Functions:
-    main(): Runs the vocabulary extraction and export workflow.
-    extract_vocabulary(filename): Parses the HTML and returns vocab lists.
-    merge_vocabulary(list1, list2, output_file): Writes merged vocab to a text file.
-    generate_and_save_pronunciation(word, lang_code, output_folder): Saves MP3 for each word.
-"""
-
 import html
 import os
 from datetime import datetime
@@ -20,15 +8,6 @@ from gtts import gTTS
 
 
 def extract_vocabulary(filename):
-    """
-    Extract vocabulary pairs from the given HTML file.
-
-    Args:
-        filename (str): Path to the HTML file.
-
-    Returns:
-        tuple: Lists of first and second vocabulary words.
-    """
     first_vocabulary = []
     second_vocabulary = []
 
@@ -53,14 +32,6 @@ def extract_vocabulary(filename):
 
 
 def merge_vocabulary(first_vocabulary, second_vocabulary, output_file):
-    """
-    Merge the first and second vocabulary lists into a single file.
-
-    Args:
-        first_vocabulary (list): List of first vocabulary words.
-        second_vocabulary (list): List of second vocabulary words.
-        output_file (str): Path to the output file.
-    """
     with open(output_file, "w", encoding="utf-8") as file:
         for first_word, second_word in zip(first_vocabulary[2:], second_vocabulary[2:]):
             line = f"{first_word}\t{second_word}\n"
@@ -68,24 +39,14 @@ def merge_vocabulary(first_vocabulary, second_vocabulary, output_file):
 
 
 def generate_and_save_pronunciation(word, lang_code, output_folder):
-    """
-    Generate and save the pronunciation of a word.
-
-    Args:
-        word (str): The word to generate pronunciation for.
-        lang_code (str): The language code for pronunciation.
-        output_folder (str): The folder to save the audio file.
-    """
     tts = gTTS(word, lang=lang_code)
     filename = f"{lang_code}_{word}.mp3"
     filepath = os.path.join(output_folder, filename)
     tts.save(filepath)
     print(f"📥 Saved audio for '{word}' to '{filepath}'")
 
+
 def main():
-    """
-    Driver code to extract Duolingo vocabulary, generate audio, and prepare an Anki-friendly CSV.
-    """
     filename = input("Enter the filename (default 'duolingo.txt'): ") or "duolingo.txt"
     langcode = input("Enter the language code (default 'fr-en'): ") or "fr-en"
     output_folder = input("Enter the output folder (default 'audio'): ") or "audio"
@@ -112,13 +73,12 @@ def main():
 
     print("===== CREATING ANKI CSV FILE =====")
     audio_col = [f"{word} [sound:{first_code}_{word}.mp3]" for word in source_vocab]
-    df = pd.DataFrame({
-        first_code: source_vocab,
-        second_code: target_vocab,
-        "Audio": audio_col
-    })
+    df = pd.DataFrame(
+        {first_code: source_vocab, second_code: target_vocab, "Audio": audio_col}
+    )
     df.to_csv(csv_output_file, index=False)
     print(f"📝 CSV saved as '{csv_output_file}'")
+
 
 if __name__ == "__main__":
     main()
