@@ -47,6 +47,7 @@ def generate_and_save_pronunciation(word, lang_code, output_folder):
 
 
 def main():
+    print("===== DUOLINGO VOCABULARY EXTRACTOR =====")
     filename = input("Enter the filename (default 'duolingo.txt'): ") or "duolingo.txt"
     langcode = input("Enter the language code (default 'fr-en'): ") or "fr-en"
     output_folder = input("Enter the output folder (default 'audio'): ") or "audio"
@@ -63,7 +64,7 @@ def main():
 
     print("===== SAVING VOCABULARY TEXT FILE =====")
     merge_vocabulary(source_vocab, target_vocab, txt_output_file)
-    print(f"📄 Saved vocabulary as '{txt_output_file}'")
+    print(f"Saved vocabulary as '{txt_output_file}'")
 
     print("===== GENERATING AUDIO FILES =====")
     os.makedirs(output_folder, exist_ok=True)
@@ -77,7 +78,7 @@ def main():
         {first_code: source_vocab, second_code: target_vocab, "Audio": audio_col}
     )
     df.to_csv(csv_output_file, index=False)
-    print(f"📝 CSV saved as '{csv_output_file}'")
+    print(f"Saved Anki CSV as '{csv_output_file}'")
 
 
 if __name__ == "__main__":
