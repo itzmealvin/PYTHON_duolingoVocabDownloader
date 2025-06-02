@@ -5,6 +5,7 @@ from datetime import datetime
 import pandas as pd
 from bs4 import BeautifulSoup
 from gtts import gTTS
+from tqdm import tqdm
 
 
 class DuolingoVocabularyExtractor:
@@ -49,7 +50,7 @@ class DuolingoVocabularyExtractor:
 
     def generate_audio_files(self):
         os.makedirs(self.output_folder, exist_ok=True)
-        for word in self.source_vocab:
+        for word in tqdm(self.source_vocab, desc="Generating audio"):
             self._generate_and_save_pronunciation(word, self.first_code)
 
     def _generate_and_save_pronunciation(self, word, lang_code):
@@ -76,7 +77,7 @@ class DuolingoVocabularyExtractor:
         print(f"Saved CSV to {self.csv_output_file}")
 
     def run(self):
-        print("===== DUOLINGO VOCABULARY EXTRACTOR =====")
+
         print("===== EXTRACTING WORDS FROM HTML =====")
         self.extract_vocabulary()
         for src, tgt in zip(self.source_vocab, self.target_vocab):
@@ -93,7 +94,7 @@ class DuolingoVocabularyExtractor:
 
 
 if __name__ == "__main__":
-
+    print("===== DUOLINGO VOCABULARY EXTRACTOR =====")
     filename = input("Enter the filename (default 'duolingo.txt'): ") or "duolingo.txt"
     langcode = input("Enter the language code (default 'fr-en'): ") or "fr-en"
     output_folder = input("Enter the output folder (default 'audio'): ") or "audio"
