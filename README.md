@@ -6,9 +6,11 @@ Before using this tool, ensure you have the following:
 
 - A Python environment set up on your system.
 - The necessary libraries installed. You can do this by running the command:
+
   ```sh
   pip3 install -r requirements.txt
   ```
+
 - A Duolingo Plus account.
 
 ## STEPS TO USE THE TOOL
