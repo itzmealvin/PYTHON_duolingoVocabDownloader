@@ -1,4 +1,4 @@
-pandas
 bs4
 gtts
+pandas
 tqdm

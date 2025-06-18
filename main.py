@@ -77,7 +77,6 @@ class DuolingoVocabularyExtractor:
         print(f"Saved CSV to {self.csv_output_file}")
 
     def run(self):
-
         print("===== EXTRACTING WORDS FROM HTML =====")
         self.extract_vocabulary()
         for src, tgt in zip(self.source_vocab, self.target_vocab):
