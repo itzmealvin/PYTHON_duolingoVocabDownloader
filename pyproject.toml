@@ -1,0 +1,12 @@
+[project]
+name = "python-duolingovocabdownloader"
+version = "0.1.0"
+description = "A semi-automated tool for downloading and organizing vocabulary lists from Duolingo, helping learners efficiently save and study words from their language courses"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "bs4>=0.0.2",
+    "gtts>=2.5.4",
+    "pandas>=2.3.1",
+    "tqdm>=4.67.1",
+]
